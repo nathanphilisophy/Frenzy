@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Mosaic Love Art</title>
+    <style>
+        body {
+            text-align: center;
+            background-color: black;
+            color: pink;
+            font-family: monospace;
+            white-space: pre;
+            font-size: 8px; /* Adjust for clarity */
+        }
+    </style>
+</head>
+<body>
+    <canvas id="imageCanvas" style="display: none;"></canvas>
+    <pre id="asciiArt"></pre>
+
+    <script>
+        const words = ["I love you", "Mahal kita", "Babyyy", "Sweetheart", "Honey", "Love", "Dear", "My love"];
+        
+        function getRandomWord() {
+            return words[Math.floor(Math.random() * words.length)];
+        }
+
+        function imageToAscii(imgSrc) {
+            let canvas = document.getElementById("imageCanvas");
+            let ctx = canvas.getContext("2d");
+            let img = new Image();
+            img.src = imgSrc;
+            img.onload = function () {
+                const width = 100;  // Adjust width of ASCII output
+                const scale = img.height / img.width;
+                const height = Math.floor(width * scale * 0.5);
+
+                canvas.width = width;
+                canvas.height = height;
+                ctx.drawImage(img, 0, 0, width, height);
+
+                let imageData = ctx.getImageData(0, 0, width, height);
+                let data = imageData.data;
+                let asciiStr = "";
+
+                for (let i = 0; i < data.length; i += 4 * width) {
+                    for (let j = 0; j < width * 4; j += 4) {
+                        let brightness = (data[i + j] + data[i + j + 1] + data[i + j + 2]) / 3;
+                        asciiStr += brightness > 128 ? " " : getRandomWord() + " ";
+                    }
+                    asciiStr += "\n";
+                }
+
+                document.getElementById("asciiArt").textContent = asciiStr;
+            };
+        }
+
+        // Replace with your image URL
+        imageToAscii("your-image-url.jpg");
+    </script>
+</body>
+</html>
